@@ -5,51 +5,71 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.learn.apple.mystudymaterials.R;
+import com.learn.apple.mystudymaterials.base.BaseActivity;
+import com.learn.apple.mystudymaterials.base.Constant;
+import com.learn.apple.mystudymaterials.utils.SharedPreferencesUtil;
 import com.learn.apple.mystudymaterials.utils.StatusBarCompat;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity {
-
-    protected View statusBarView = null;
-    protected int statusBarColor = 0;
-    private Toolbar toolbar;
+public class MainActivity extends BaseActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+    public int getLayoutId() {
+        return R.layout.activity_main;
+    }
 
-        if (statusBarColor == 0) {
-            statusBarView = StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorPrimaryDark));
-        } else if (statusBarColor != -1) {
-            statusBarView = StatusBarCompat.compat(this, statusBarColor);
-        }
-        toolbar = ButterKnife.findById(this, R.id.common_toolbar);
-        if (toolbar != null){
-            initToolBar();
-            setSupportActionBar(toolbar);
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-                && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            //透明状态栏
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
+    @Override
+    public void configViews() {
 
     }
 
-    private void initToolBar() {
-        toolbar.setLogo(R.mipmap.icon_2);
-        toolbar.setTitle("");
+    @Override
+    public void initDatas() {
+
+    }
+
+    @Override
+    public void initToolBar() {
+        mCommonToolbar.setLogo(R.mipmap.icon_2);
+        mCommonToolbar.setTitle("");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.action_search:
+                break;
+            case R.id.action_night_mode:
+                if (SharedPreferencesUtil.getInstance().getBoolean(Constant.ISNIGHT, false)) {
+                    SharedPreferencesUtil.getInstance().putBoolean(Constant.ISNIGHT, false);
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                } else {
+                    SharedPreferencesUtil.getInstance().putBoolean(Constant.ISNIGHT, true);
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                }
+                recreate();
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @OnClick(R.id.bt_go_home)
