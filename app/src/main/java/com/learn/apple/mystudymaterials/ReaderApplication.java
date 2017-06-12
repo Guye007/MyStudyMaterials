@@ -6,6 +6,10 @@ import android.support.v7.app.AppCompatDelegate;
 
 import com.learn.apple.mystudymaterials.base.Constant;
 import com.learn.apple.mystudymaterials.base.CrashHandler;
+import com.learn.apple.mystudymaterials.compoent.AppComponent;
+import com.learn.apple.mystudymaterials.compoent.DaggerAppComponent;
+import com.learn.apple.mystudymaterials.module.AppModule;
+import com.learn.apple.mystudymaterials.module.BookApiModule;
 import com.learn.apple.mystudymaterials.utils.AppUtils;
 import com.learn.apple.mystudymaterials.utils.LogUtils;
 import com.learn.apple.mystudymaterials.utils.SharedPreferencesUtil;
@@ -19,6 +23,7 @@ import com.squareup.leakcanary.RefWatcher;
 public class ReaderApplication extends Application{
 
     private static ReaderApplication sInstance;
+    private AppComponent appComponent;
 
     private RefWatcher refWatcher;
 
@@ -63,6 +68,13 @@ public class ReaderApplication extends Application{
     }
 
     private void initCompoent() {
+        appComponent = DaggerAppComponent.builder()
+                .bookApiModule(new BookApiModule())
+                .appModule(new AppModule(this))
+                .build();
+    }
 
+    public AppComponent getAppComponent(){
+        return appComponent;
     }
 }
