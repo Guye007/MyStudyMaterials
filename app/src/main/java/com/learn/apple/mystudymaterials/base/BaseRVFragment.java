@@ -1,10 +1,18 @@
 package com.learn.apple.mystudymaterials.base;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.view.View;
+
 import com.learn.apple.mystudymaterials.R;
 import com.learn.apple.mystudymaterials.compoent.AppComponent;
+import com.learn.apple.mystudymaterials.view.recyclerview.EasyRecyclerView;
 import com.learn.apple.mystudymaterials.view.recyclerview.adapter.OnLoadMoreListener;
 import com.learn.apple.mystudymaterials.view.recyclerview.adapter.RecyclerArrayAdapter;
 import com.learn.apple.mystudymaterials.view.recyclerview.swipe.OnRefreshListener;
+
+import java.lang.reflect.Constructor;
 
 import javax.inject.Inject;
 
@@ -19,33 +27,74 @@ public abstract class BaseRVFragment<T1 extends BaseContract.BasePresenter, T2> 
 
     @Inject
     protected T1 mPresenter;
+    protected RecyclerArrayAdapter<T2> mAdapter;
 
+    @Bind(R.id.recyclerview)
+    protected EasyRecyclerView mRecyclerView;
 
-    @Override
-    public int getLayoutResId() {
-        return 0;
-    }
-
-    @Override
-    protected void setupActivityCompoent(AppComponent appComponent) {
-
-    }
-
-    @Override
-    protected void configViews() {
-
-    }
-
-    @Override
-    protected void initDatas() {
-
-    }
+    protected int start = 0;
+    protected int limit = 20;
 
     /*
     * 此方法不可再重写
     * */
     @Override
     protected void attachView() {
+        if (mPresenter != null){
+            mPresenter.attachView(this);
+        }
+    }
 
+    protected void initAdapter(boolean refreshable, boolean loadmoreable){
+        if (mRecyclerView != null){
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getSupportActivity()));
+            mRecyclerView.setItemDecoration(ContextCompat.getColor(activity, R.color.common_divider_narrow), 1, 0, 0);
+            mRecyclerView.setAdapterWithProgress(mAdapter);
+        }
+
+        if (mAdapter != null){
+            mAdapter.setOnItemClickListener(this);
+            mAdapter.setError(R.layout.common_error_view).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mAdapter.resumeMore();
+                }
+            });
+            if (loadmoreable){
+                mAdapter.setMore(R.layout.common_more_view, this);
+                mAdapter.setNoMore(R.layout.common_nomore_view);
+            }
+            if (refreshable && mRecyclerView != null){
+                mRecyclerView.setRefreshListener(this);
+            }
+        }
+    }
+
+    protected void initAdapter(Class<? extends RecyclerArrayAdapter<T2>> clazz, boolean refreshable, boolean loadmoreable){
+        mAdapter = (RecyclerArrayAdapter<T2>) createInstance(clazz);
+        initAdapter(refreshable, loadmoreable);
+    }
+
+    public Object createInstance(Class<?> cls){
+        Object obj;
+
+        try {
+            Constructor constructor = cls.getDeclaredConstructor(Context.class);
+            constructor.setAccessible(true);
+            obj = constructor.newInstance(mContext);
+        } catch (Exception e) {
+            obj = null;
+        }
+        return obj;
+    }
+
+    @Override
+    public void onLoadMore() {
+
+    }
+
+    @Override
+    public void onRefresh() {
+        mRecyclerView.setRefreshing(true);
     }
 }

@@ -83,7 +83,7 @@ public  abstract class BaseFragment extends Fragment {
         ButterKnife.unbind(this);
     }
 
-    private FragmentActivity getSupportActivity() {
+    public FragmentActivity getSupportActivity() {
         return super.getActivity();
     }
 

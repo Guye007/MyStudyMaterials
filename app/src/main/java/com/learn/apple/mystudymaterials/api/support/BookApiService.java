@@ -16,6 +16,9 @@
 package com.learn.apple.mystudymaterials.api.support;
 
 
+import com.learn.apple.mystudymaterials.bean.BookMixAToc;
+import com.learn.apple.mystudymaterials.bean.Recommend;
+
 import java.util.List;
 
 import retrofit2.http.Body;
@@ -32,5 +35,23 @@ import rx.Observable;
  * @date 2016/8/3.
  */
 public interface BookApiService {
+
+    @GET("/book/recommend")
+    Observable<Recommend> getRecommend(@Query("gender") String gender);
+
+    @GET("/mix-atoc/{bookId}")
+    Observable<BookMixAToc> getBookMixAToc(@Path("bookId") String bookId,
+                                           @Query("view") String view);
+
+
+
+
+
+
+
+
+
+
+
 
 }

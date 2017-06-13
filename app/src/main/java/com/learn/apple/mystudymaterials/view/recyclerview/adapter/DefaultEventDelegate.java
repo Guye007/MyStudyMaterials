@@ -20,8 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.joy.reader.view.recyclerview.EasyRecyclerView;
-
+import com.learn.apple.mystudymaterials.view.recyclerview.EasyRecyclerView;
 
 /**
  * Created by Mr.Jude on 2015/8/18.

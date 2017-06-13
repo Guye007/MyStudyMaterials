@@ -17,6 +17,8 @@ package com.learn.apple.mystudymaterials.api;
 
 import com.learn.apple.mystudymaterials.api.support.BookApiService;
 import com.learn.apple.mystudymaterials.base.Constant;
+import com.learn.apple.mystudymaterials.bean.BookMixAToc;
+import com.learn.apple.mystudymaterials.bean.Recommend;
 
 import java.util.List;
 
@@ -53,6 +55,14 @@ public class BookApi {
         if (instance == null)
             instance = new BookApi(okHttpClient);
         return instance;
+    }
+
+    public Observable<Recommend> getRecommend(String gender) {
+        return service.getRecommend(gender);
+    }
+
+    public Observable<BookMixAToc> getBookMixAToc(String bookId, String view){
+        return service.getBookMixAToc(bookId,view);
     }
 
 }
