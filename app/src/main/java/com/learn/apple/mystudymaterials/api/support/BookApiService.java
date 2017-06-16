@@ -18,6 +18,8 @@ package com.learn.apple.mystudymaterials.api.support;
 
 import com.learn.apple.mystudymaterials.bean.BookMixAToc;
 import com.learn.apple.mystudymaterials.bean.Recommend;
+import com.learn.apple.mystudymaterials.bean.user.Login;
+import com.learn.apple.mystudymaterials.bean.user.LoginReq;
 
 import java.util.List;
 
@@ -42,9 +44,16 @@ public interface BookApiService {
     @GET("/mix-atoc/{bookId}")
     Observable<BookMixAToc> getBookMixAToc(@Path("bookId") String bookId,
                                            @Query("view") String view);
-
-
-
+    /*
+     * 第三方登陆
+     *
+     * @param platform_uid
+     * @param platform_token
+     * @param platform_code  “QQ”
+     * @return
+    */
+    @POST("/user/login")
+    Observable<Login> login(@Body LoginReq loginReq);
 
 
 

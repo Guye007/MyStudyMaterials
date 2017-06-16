@@ -39,7 +39,7 @@ public abstract class BaseRVFragment<T1 extends BaseContract.BasePresenter, T2> 
     * 此方法不可再重写
     * */
     @Override
-    protected void attachView() {
+    public void attachView() {
         if (mPresenter != null){
             mPresenter.attachView(this);
         }
@@ -90,11 +90,28 @@ public abstract class BaseRVFragment<T1 extends BaseContract.BasePresenter, T2> 
 
     @Override
     public void onLoadMore() {
-
     }
 
     @Override
     public void onRefresh() {
         mRecyclerView.setRefreshing(true);
+    }
+
+    protected void loaddingError(){
+        //说明缓存也没有加载，那就显示errorview，如果有缓存，即使刷新失败也不显示error
+        if (mAdapter.getCount() < 1){
+            mAdapter.clear();
+        }
+        mAdapter.pauseMore();
+        mRecyclerView.setRefreshing(false);
+        mRecyclerView.showTipViewAndDelayClose("似乎没有网络哦");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mPresenter != null){
+            mPresenter.detachView();
+        }
     }
 }

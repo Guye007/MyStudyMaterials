@@ -16,6 +16,7 @@ import android.view.WindowManager;
 
 import com.learn.apple.mystudymaterials.R;
 import com.learn.apple.mystudymaterials.ReaderApplication;
+import com.learn.apple.mystudymaterials.compoent.AppComponent;
 import com.learn.apple.mystudymaterials.utils.SharedPreferencesUtil;
 import com.learn.apple.mystudymaterials.utils.StatusBarCompat;
 import com.learn.apple.mystudymaterials.view.loadding.CustomDialog;
@@ -49,7 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         mContext = this;
         ButterKnife.bind(this);
 
-//        setupActivityComponent(ReaderApplication.);
+        setupActivityComponent(ReaderApplication.getsInstance().getAppComponent());
         mCommonToolbar = ButterKnife.findById(this, R.id.common_toolbar);
         if (mCommonToolbar != null){
             initToolBar();
@@ -122,7 +123,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void showDialog(){
         getDialog().show();
     }
-    private void dismissDialog() {
+    public void dismissDialog() {
         if (dialog != null){
             dialog.dismiss();
             dialog = null;
@@ -173,4 +174,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     public abstract void initDatas();
 
     public abstract void initToolBar();
+
+    protected abstract void setupActivityComponent(AppComponent appComponent);
 }

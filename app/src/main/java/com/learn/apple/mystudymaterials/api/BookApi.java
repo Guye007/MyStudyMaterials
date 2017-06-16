@@ -19,6 +19,8 @@ import com.learn.apple.mystudymaterials.api.support.BookApiService;
 import com.learn.apple.mystudymaterials.base.Constant;
 import com.learn.apple.mystudymaterials.bean.BookMixAToc;
 import com.learn.apple.mystudymaterials.bean.Recommend;
+import com.learn.apple.mystudymaterials.bean.user.Login;
+import com.learn.apple.mystudymaterials.bean.user.LoginReq;
 
 import java.util.List;
 
@@ -65,4 +67,27 @@ public class BookApi {
         return service.getBookMixAToc(bookId,view);
     }
 
+    public Observable<Login> login(String platform_uid, String platform_token, String platform_code){
+        LoginReq loginReq = new LoginReq();
+        loginReq.platform_code = platform_code;
+        loginReq.platform_token = platform_token;
+        loginReq.platform_uid = platform_uid;
+
+        return service.login(loginReq);
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

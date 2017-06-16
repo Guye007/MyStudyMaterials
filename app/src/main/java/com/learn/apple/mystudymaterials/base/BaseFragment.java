@@ -17,6 +17,8 @@ import com.learn.apple.mystudymaterials.ReaderApplication;
 import com.learn.apple.mystudymaterials.compoent.AppComponent;
 import com.learn.apple.mystudymaterials.view.loadding.CustomDialog;
 
+import org.greenrobot.eventbus.Subscribe;
+
 import butterknife.ButterKnife;
 
 /**
@@ -26,44 +28,48 @@ import butterknife.ButterKnife;
 public  abstract class BaseFragment extends Fragment {
 
     protected View parentView;
-    protected LayoutInflater inflater;
     protected FragmentActivity activity;
+    protected LayoutInflater inflater;
+
     protected Context mContext;
+
     private CustomDialog dialog;
 
     public abstract
     @LayoutRes
     int getLayoutResId();
 
-    protected abstract void setupActivityCompoent(AppComponent appComponent);
+    protected abstract void setupActivityComponent(AppComponent appComponent);
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        parentView = inflater.inflate(getLayoutResId(),container,false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
+        parentView = inflater.inflate(getLayoutResId(), container, false);
         activity = getSupportActivity();
         mContext = activity;
         this.inflater = inflater;
         return parentView;
     }
 
+
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this,view);
-        setupActivityCompoent(ReaderApplication.getsInstance().getAppComponent());
+        ButterKnife.bind(this, view);
+        setupActivityComponent(ReaderApplication.getsInstance().getAppComponent());
         attachView();
         initDatas();
         configViews();
     }
 
-    /*
-    * 对各种控件进行设置，适配，填充数据
-    * */
-    protected abstract void configViews();
+    public abstract void attachView();
 
-    protected abstract void initDatas();
+    @Subscribe
+    public abstract void initDatas();
 
-    protected abstract void attachView();
+    /**
+     * 对各种控件进行设置、适配、填充数据
+     */
+    public abstract void configViews();
 
     @Override
     public void onAttach(Activity activity) {
@@ -87,65 +93,65 @@ public  abstract class BaseFragment extends Fragment {
         return super.getActivity();
     }
 
-    public Context getApplicationContext(){
-        return this.activity == null ? (getActivity() == null ? null :
-                getActivity().getApplicationContext()) : this.activity.getApplicationContext();
+    public Context getApplicationContext() {
+        return this.activity == null ? (getActivity() == null ? null : getActivity()
+                .getApplicationContext()) : this.activity.getApplicationContext();
     }
 
-    protected LayoutInflater getLayoutInflater(){
+    protected LayoutInflater getLayoutInflater() {
         return inflater;
     }
 
-    protected View getParentView(){
+    protected View getParentView() {
         return parentView;
     }
 
-    public CustomDialog getDialog(){
-        if (dialog == null){
+    public CustomDialog getDialog() {
+        if (dialog == null) {
             dialog = CustomDialog.instance(getActivity());
             dialog.setCancelable(false);
         }
         return dialog;
     }
 
-    public void hideDialog(){
-        if (dialog != null){
+    public void hideDialog() {
+        if (dialog != null)
             dialog.hide();
-        }
     }
 
-    public void showDialog(){
+    public void showDialog() {
         getDialog().show();
     }
 
-    public void dismissDialog(){
-        if (dialog != null){
+    public void dismissDialog() {
+        if (dialog != null) {
             dialog.dismiss();
             dialog = null;
         }
     }
 
-    protected void gone(final View...views){
-        if (views != null && views.length > 0){
-            for (View view : views){
-                if (view != null){
+    protected void gone(final View... views) {
+        if (views != null && views.length > 0) {
+            for (View view : views) {
+                if (view != null) {
                     view.setVisibility(View.GONE);
                 }
             }
         }
     }
 
-    protected void visible(final View...views){
-        if (views != null && views.length > 0){
-            for (View view : views){
-                if (view != null){
+    protected void visible(final View... views) {
+        if (views != null && views.length > 0) {
+            for (View view : views) {
+                if (view != null) {
                     view.setVisibility(View.VISIBLE);
                 }
             }
         }
+
     }
 
-    protected boolean isVisible(View view){
+    protected boolean isVisible(View view) {
         return view.getVisibility() == View.VISIBLE;
     }
 }

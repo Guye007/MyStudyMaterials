@@ -12,12 +12,16 @@ import com.learn.apple.mystudymaterials.base.BaseRVFragment;
 import com.learn.apple.mystudymaterials.bean.BookMixAToc;
 import com.learn.apple.mystudymaterials.bean.Recommend;
 import com.learn.apple.mystudymaterials.compoent.AppComponent;
+import com.learn.apple.mystudymaterials.compoent.DaggerMainComponent;
+import com.learn.apple.mystudymaterials.mannager.CollectionsManager;
+import com.learn.apple.mystudymaterials.ui.Activitys.MainActivity;
 import com.learn.apple.mystudymaterials.ui.contract.RecommendContract;
 import com.learn.apple.mystudymaterials.ui.easyadapter.RecommendAdapter;
 import com.learn.apple.mystudymaterials.ui.presenter.RecommendPresenter;
 import com.learn.apple.mystudymaterials.view.recyclerview.adapter.RecyclerArrayAdapter;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,40 +55,76 @@ public class RecommendFragment extends BaseRVFragment<RecommendPresenter, Recomm
         return R.layout.fragment_recommend;
     }
 
-    @Override
-    protected void initDatas() {
-        EventBus.getDefault().register(this);
+    @Subscribe
+    public void initDatas() {
+
     }
 
     @Override
-    protected void configViews() {
+    public void configViews() {
         initAdapter(RecommendAdapter.class, true, false);
+        mAdapter.setOnItemLongClickListener(this);
+        mAdapter.addFooter(new RecyclerArrayAdapter.ItemView() {
+            @Override
+            public View onCreateView(ViewGroup parent) {
+                View headView = LayoutInflater.from(activity).inflate(R.layout.foot_view_shelf,null);
+                return headView;
+            }
 
+            @Override
+            public void onBindView(final View headerView) {
+                headerView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((MainActivity) activity).setCurrentItem(2);
+                    }
+                });
+            }
+        });
 
+        mPresenter.getRecommendList();
     }
 
     @Override
     public void showError() {
-
+        loaddingError();
+        dismissDialog();
     }
 
     @Override
     public void complete() {
-
+        mRecyclerView.setRefreshing(false);
     }
 
     @Override
     public void showRecommendList(List<Recommend.RecommendBooks> list) {
-
+        mAdapter.clear();
+        mAdapter.addAll(list);
+        //推荐列表默认加入收藏
+        for (Recommend.RecommendBooks bean : list){
+            //
+            CollectionsManager.getInstance().add(bean);
+        }
     }
 
     @Override
     public void showBookToc(String bookId, List<BookMixAToc.mixToc.Chapters> list) {
-
+        chaptersList.clear();
+        chaptersList.addAll(list);
+        dismissDialog();
     }
 
     @Override
     public void onRefresh() {
+        super.onRefresh();
+        gone(llBatchManagement);
+        List<Recommend.RecommendBooks> data = CollectionsManager.getInstance().getCollectionListBySort();
+        mAdapter.clear();
+        mAdapter.addAll(data);
+        //不加下面这句代码会导致，添加本地书籍的时候，部分书籍添加后直接崩溃
+        //报错：Scrapped or attached views may not be recycled. isScrap:false isAttached:true
+        mAdapter.notifyDataSetChanged();
+        mRecyclerView.setRefreshing(false);
 
     }
 
@@ -95,8 +135,11 @@ public class RecommendFragment extends BaseRVFragment<RecommendPresenter, Recomm
 
 
     @Override
-    protected void setupActivityCompoent(AppComponent appComponent) {
-
+    protected void setupActivityComponent(AppComponent appComponent) {
+        DaggerMainComponent.builder()
+                .appComponent(appComponent)
+                .build()
+                .inject(this);
     }
 
 
@@ -110,18 +153,10 @@ public class RecommendFragment extends BaseRVFragment<RecommendPresenter, Recomm
         return false;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        ButterKnife.bind(this, rootView);
-        return rootView;
-    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @OnClick({R.id.tvSelectAll, R.id.tvDelete})
