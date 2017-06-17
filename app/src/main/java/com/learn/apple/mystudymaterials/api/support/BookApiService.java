@@ -17,6 +17,7 @@ package com.learn.apple.mystudymaterials.api.support;
 
 
 import com.learn.apple.mystudymaterials.bean.BookMixAToc;
+import com.learn.apple.mystudymaterials.bean.ChapterRead;
 import com.learn.apple.mystudymaterials.bean.Recommend;
 import com.learn.apple.mystudymaterials.bean.user.Login;
 import com.learn.apple.mystudymaterials.bean.user.LoginReq;
@@ -54,6 +55,9 @@ public interface BookApiService {
     */
     @POST("/user/login")
     Observable<Login> login(@Body LoginReq loginReq);
+
+    @GET("http://chapter2.zhuishushenqi.com/chapter/{url}")
+    Observable<ChapterRead> getChapterRead(@Path("url") String url);
 
 
 

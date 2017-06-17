@@ -15,6 +15,7 @@ import com.learn.apple.mystudymaterials.compoent.AppComponent;
 import com.learn.apple.mystudymaterials.compoent.DaggerMainComponent;
 import com.learn.apple.mystudymaterials.mannager.CollectionsManager;
 import com.learn.apple.mystudymaterials.ui.Activitys.MainActivity;
+import com.learn.apple.mystudymaterials.ui.Activitys.ReadActivity;
 import com.learn.apple.mystudymaterials.ui.contract.RecommendContract;
 import com.learn.apple.mystudymaterials.ui.easyadapter.RecommendAdapter;
 import com.learn.apple.mystudymaterials.ui.presenter.RecommendPresenter;
@@ -146,6 +147,9 @@ public class RecommendFragment extends BaseRVFragment<RecommendPresenter, Recomm
     @Override
     public void onItemClick(int position) {
 
+        if (isVisible(llBatchManagement))
+            return;
+        ReadActivity.startActivity(activity, mAdapter.getItem(position), mAdapter.getItem(position).isFromSD);
     }
 
     @Override

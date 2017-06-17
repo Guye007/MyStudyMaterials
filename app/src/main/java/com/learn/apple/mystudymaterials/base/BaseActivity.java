@@ -148,7 +148,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected void showStatusbar(){
+    protected void showStatusBar(){
         WindowManager.LayoutParams attrs = getWindow().getAttributes();
         attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
         getWindow().setAttributes(attrs);

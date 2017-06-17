@@ -1,5 +1,7 @@
 package com.learn.apple.mystudymaterials.bean;
 
+import com.learn.apple.mystudymaterials.bean.base.Base;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -7,11 +9,11 @@ import java.util.List;
  * Created by apple on 2017/6/13.
  */
 
-public class Recommend {
+public class Recommend extends Base{
 
     public List<RecommendBooks> books;
 
-    public static class RecommendBooks{
+    public static class RecommendBooks implements Serializable{
 
         /**
          * _id : 526e8e3e7cfc087140004df7
